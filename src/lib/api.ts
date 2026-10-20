@@ -105,8 +105,13 @@ export interface Attempt {
 
 // ─── Fetch helper ────────────────────────────────────────────────────────────
 
+// Base del backend. En prod (Vercel) se setea VITE_API_URL con la URL absoluta
+// de Render, así las requests van directo al backend. En dev queda "" y pegan a
+// /api relativo, que el proxy de vite.config redirige al backend local.
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     headers: { "Content-Type": "application/json", ...init?.headers },
     ...init,
   });
